@@ -2,10 +2,23 @@ const Product = require("../models/productModel");
 
 const getAllProducts = async (req, res) => {
   try {
+    const { page, pageSize } = req.pagination;
+
     const products = await Product.find();
-    res.json(products);
+
+    const startIndex = (page - 1) * pageSize;
+    const endIndex = startIndex + pageSize;
+    const paginatedProducts = products.slice(startIndex, endIndex);
+
+    res.json({
+      products: paginatedProducts,
+      totalPages: Math.ceil(products.length / pageSize),
+      currentPage: page,
+    });
   } catch (error) {
     res.status(500).json({ error: "Помилка при отриманні товарів" });
+    console.error('Error:', error);
+console.error('Stack:', error.stack);
   }
 };
 
@@ -38,9 +51,9 @@ const addProduct = async (req, res) => {
 const updateProduct = async (req, res) => {
   try {
     const { id } = req.params;
-    if(!id) {
-        console.log(id, "Невірний ідентифікатор товару");
-        return res.status(400).json({ error: "Невірний ідентифікатор товару" });
+    if (!id) {
+      console.log(id, "Невірний ідентифікатор товару");
+      return res.status(400).json({ error: "Невірний ідентифікатор товару" });
     }
     const updatedProduct = await Product.findByIdAndUpdate(
       id,
@@ -59,11 +72,11 @@ const updateProduct = async (req, res) => {
 
 const delProducts = async (req, res) => {
   try {
-  //   const { id } = req.params;
-  //   if(!id) {
-  //     console.log(id, "Невірний ідентифікатор товару");
-  //     return res.status(400).json({ error: "Невірний ідентифікатор товару" });
-  // }
+    //   const { id } = req.params;
+    //   if(!id) {
+    //     console.log(id, "Невірний ідентифікатор товару");
+    //     return res.status(400).json({ error: "Невірний ідентифікатор товару" });
+    // }
     const deletedProduct = await Product.findByIdAndDelete(req.params.id);
     if (!deletedProduct) {
       console.warn("Product not found");

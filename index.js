@@ -4,7 +4,6 @@ const app = express();
 const morgan = require('morgan')
 const dotenv = require('dotenv')
 const storesRouter = require('./src/routes/storesRouter')
-// const userRoutes = require('./src/routes/userRoutes')
 const cors = require('cors')
 
 dotenv.config({
@@ -17,7 +16,7 @@ app.use(cors())
 
 app.use(morgan('dev'));
 app.use(express.json());
-app.use('/api', storesRouter)
+app.use('/api/pharm', storesRouter)
 
 
 module.exports = app
